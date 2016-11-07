@@ -1,0 +1,20 @@
+#!/usr/bin/env python
+# -*- coding: UTF-8 -*-
+
+def action_error(agent, old_status, new_status):
+    """redémarre le service rvp sur amon uniquement si erreur tunnels
+    """
+    from os import system
+    from zephir.monitor.agentmanager.config import HAS_TYPE_AMON
+
+    if HAS_TYPE_AMON:
+        if exists("/var/lock/bastion"):
+            res = system('/etc/init.d/rvp restart')
+            if res == 0:
+                return "agent %s : service rvp relancé" % agent.name
+            else:
+                return "agent %s : erreur lors de la relance du service rvp" % agent.name
+        else:
+            return "agent %s : bastion arrêté, on ne relance pas rvp" % agent.name
+    else:
+        return "agent %s : on ne relance pas ipsec sur Sphynx" % agent.name
